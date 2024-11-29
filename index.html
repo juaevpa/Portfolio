@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio Viewer</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Portfolio Viewer</h1>
+        <div class="url-input">
+          <input
+            type="url"
+            id="websiteUrl"
+            placeholder="Introduce la URL del sitio web"
+          />
+          <button onclick="loadWebsite()">Visualizar</button>
+        </div>
+      </header>
+
+      <div class="devices-container">
+        <div class="device desktop">
+          <h2>Desktop</h2>
+          <div class="frame-container">
+            <img id="desktopImage" alt="Vista Desktop" />
+          </div>
+        </div>
+
+        <div class="device tablet">
+          <h2>Tablet</h2>
+          <div class="frame-container">
+            <img id="tabletImage" alt="Vista Tablet" />
+          </div>
+        </div>
+
+        <div class="device mobile">
+          <h2>Móvil</h2>
+          <div class="frame-container">
+            <img id="mobileImage" alt="Vista Móvil" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
