@@ -18,16 +18,16 @@ const deviceConfig = {
     backgroundImage: "desktop.jpg",
   },
   tablet: {
-    width: "33%",
-    height: "65.5%",
-    top: "23.5%",
-    left: "45%",
+    width: "33.5%",
+    height: "66%",
+    top: "23.2%",
+    left: "44.8%",
     backgroundImage: "tablet.jpg",
   },
   mobile: {
-    width: "26.8%",
-    height: "50%",
-    top: "20.7%",
+    width: "26.7%",
+    height: "65%",
+    top: "11.9%",
     left: "36.1%",
     backgroundImage: "mobile.jpg",
   },
@@ -87,17 +87,42 @@ app.get("/screenshot", async (req, res) => {
     );
 
     // Redimensionar y combinar imágenes
-    const resizedScreenshot = await sharp(screenshot)
-      .resize(overlayWidth, overlayHeight, {
+    let resizedScreenshot = await sharp(screenshot).resize(
+      overlayWidth,
+      overlayHeight,
+      {
         fit: "cover",
-        position: "top", // Esto es equivalente a object-position: top center
-      })
-      .toBuffer();
+        position: "top",
+      }
+    );
+
+    // Aplicar border radius según el dispositivo
+    if (device === "mobile") {
+      resizedScreenshot = resizedScreenshot.composite([
+        {
+          input: Buffer.from(
+            `<svg><rect x="0" y="0" width="${overlayWidth}" height="${overlayHeight}" rx="86" ry="86"/></svg>`
+          ),
+          blend: "dest-in",
+        },
+      ]);
+    } else if (device === "tablet") {
+      resizedScreenshot = resizedScreenshot.composite([
+        {
+          input: Buffer.from(
+            `<svg><rect x="0" y="0" width="${overlayWidth}" height="${overlayHeight}" rx="12" ry="12"/></svg>`
+          ),
+          blend: "dest-in",
+        },
+      ]);
+    }
+
+    const resizedBuffer = await resizedScreenshot.toBuffer();
 
     const finalImage = await background
       .composite([
         {
-          input: resizedScreenshot,
+          input: resizedBuffer,
           top: overlayTop,
           left: overlayLeft,
         },
@@ -109,44 +134,6 @@ app.get("/screenshot", async (req, res) => {
       "Content-Length": finalImage.length,
     });
     res.end(finalImage);
-  } catch (error) {
-    console.error("Error detallado:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.get("/test-screenshot", async (req, res) => {
-  const { url, width, height, device } = req.query;
-
-  if (!url || !device) {
-    return res.status(400).send("URL and device are required");
-  }
-
-  try {
-    const browser = await puppeteer.launch({
-      headless: "new",
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
-
-    const page = await browser.newPage();
-    await page.setViewport({
-      width: parseInt(width),
-      height: parseInt(height),
-    });
-
-    await page.goto(url, {
-      waitUntil: "networkidle0",
-      timeout: 30000,
-    });
-
-    const screenshot = await page.screenshot();
-    await browser.close();
-
-    // Devolver las URLs de ambas imágenes
-    res.json({
-      backgroundImage: deviceConfig[device].backgroundImage,
-      screenshot: `data:image/png;base64,${screenshot.toString("base64")}`,
-    });
   } catch (error) {
     console.error("Error detallado:", error);
     res.status(500).json({ error: error.message });
