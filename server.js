@@ -46,7 +46,6 @@ app.get("/screenshot", async (req, res) => {
   try {
     browser = await puppeteer.launch({
       headless: "new",
-      executablePath: "/usr/bin/google-chrome",
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
@@ -66,7 +65,7 @@ app.get("/screenshot", async (req, res) => {
       timeout: 30000,
     });
 
-    await page.waitForTimeout(2000);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     const screenshot = await page.screenshot();
 
@@ -148,7 +147,11 @@ app.get("/screenshot", async (req, res) => {
     res.status(500).json({ error: error.message });
   } finally {
     if (browser) {
-      await browser.close();
+      try {
+        await browser.close();
+      } catch (closeError) {
+        console.error("Error al cerrar el navegador:", closeError);
+      }
     }
   }
 });
