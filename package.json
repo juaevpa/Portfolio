@@ -4,12 +4,12 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "build": "npm install --include=optional",
-    "postinstall": "npx puppeteer browsers install chrome"
+    "build": "echo 'No build step needed'",
+    "postinstall": "npx puppeteer install"
   },
   "dependencies": {
     "express": "^4.21.1",
-    "puppeteer": "^21.5.0",
+    "puppeteer": "^23.8.0",
     "sharp": "^0.33.5"
   },
   "engines": {
