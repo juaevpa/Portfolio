@@ -46,11 +46,11 @@ app.get("/screenshot", async (req, res) => {
   try {
     browser = await puppeteer.launch({
       headless: "new",
+      executablePath: "/usr/bin/google-chrome",
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
-        "--disable-gpu",
       ],
     });
 
@@ -148,11 +148,7 @@ app.get("/screenshot", async (req, res) => {
     res.status(500).json({ error: error.message });
   } finally {
     if (browser) {
-      try {
-        await browser.close();
-      } catch (closeError) {
-        console.error("Error al cerrar el navegador:", closeError);
-      }
+      await browser.close();
     }
   }
 });
