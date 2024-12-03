@@ -33,25 +33,37 @@ const deviceConfig = {
   },
 };
 
+const isProd = process.env.NODE_ENV === "production";
+
 app.get("/screenshot", async (req, res) => {
   const { url, width, height, device } = req.query;
+  let browser = null;
 
   if (!url || !device) {
     return res.status(400).send("URL and device are required");
   }
 
   try {
-    const browser = await puppeteer.launch({
+    const launchOptions = {
       headless: "new",
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
-        "--single-process",
+        "--disable-gpu",
+        "--window-size=1920x1080",
       ],
-    });
+    };
+
+    if (isProd) {
+      launchOptions.executablePath =
+        process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium";
+    }
+
+    browser = await puppeteer.launch(launchOptions);
 
     const page = await browser.newPage();
+    await page.setDefaultNavigationTimeout(30000);
     await page.setViewport({
       width: parseInt(width),
       height: parseInt(height),
@@ -63,7 +75,6 @@ app.get("/screenshot", async (req, res) => {
     });
 
     const screenshot = await page.screenshot();
-    await browser.close();
 
     // Cargar imagen de fondo
     const config = deviceConfig[device];
@@ -140,7 +151,18 @@ app.get("/screenshot", async (req, res) => {
     res.end(finalImage);
   } catch (error) {
     console.error("Error detallado:", error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      error: error.message,
+      stack: isProd ? undefined : error.stack,
+    });
+  } finally {
+    if (browser) {
+      try {
+        await browser.close();
+      } catch (closeError) {
+        console.error("Error al cerrar el navegador:", closeError);
+      }
+    }
   }
 });
 
