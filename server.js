@@ -1,5 +1,5 @@
 const express = require("express");
-const puppeteer = require("puppeteer-core");
+const puppeteer = require("puppeteer");
 const sharp = require("sharp");
 const path = require("path");
 const fs = require("fs").promises;
@@ -41,10 +41,17 @@ app.get("/screenshot", async (req, res) => {
   }
 
   try {
-    // Tomar screenshot con Puppeteer
+    // Configuración actualizada de Puppeteer
     const browser = await puppeteer.launch({
-      executablePath: "/usr/bin/google-chrome-stable",
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      headless: true,
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-accelerated-2d-canvas",
+        "--disable-gpu",
+        "--window-size=1920x1080",
+      ],
     });
 
     const page = await browser.newPage();
