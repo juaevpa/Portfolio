@@ -1,5 +1,5 @@
+const puppeteer = require("puppeteer-core");
 const express = require("express");
-const puppeteer = require("puppeteer");
 const sharp = require("sharp");
 const path = require("path");
 const fs = require("fs").promises;
@@ -41,17 +41,20 @@ app.get("/screenshot", async (req, res) => {
   }
 
   try {
-    // Configuración actualizada de Puppeteer
+    // Nueva configuración de Puppeteer
     const browser = await puppeteer.launch({
+      product: "chrome",
+      executablePath:
+        process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium",
       headless: true,
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
-        "--disable-accelerated-2d-canvas",
+        "--single-process",
         "--disable-gpu",
-        "--window-size=1920x1080",
       ],
+      ignoreHTTPSErrors: true,
     });
 
     const page = await browser.newPage();
@@ -143,7 +146,11 @@ app.get("/screenshot", async (req, res) => {
     res.end(finalImage);
   } catch (error) {
     console.error("Error detallado:", error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      error:
+        "Error al generar la captura de pantalla. Por favor, inténtalo de nuevo.",
+      details: error.message,
+    });
   }
 });
 
