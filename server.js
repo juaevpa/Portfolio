@@ -44,23 +44,15 @@ app.get("/screenshot", async (req, res) => {
   }
 
   try {
-    const launchOptions = {
+    browser = await puppeteer.launch({
       headless: "new",
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
         "--disable-gpu",
-        "--window-size=1920x1080",
       ],
-    };
-
-    if (isProd) {
-      launchOptions.executablePath =
-        process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium";
-    }
-
-    browser = await puppeteer.launch(launchOptions);
+    });
 
     const page = await browser.newPage();
     await page.setDefaultNavigationTimeout(30000);
@@ -70,9 +62,11 @@ app.get("/screenshot", async (req, res) => {
     });
 
     await page.goto(url, {
-      waitUntil: "networkidle0",
+      waitUntil: ["networkidle0", "domcontentloaded"],
       timeout: 30000,
     });
+
+    await page.waitForTimeout(2000);
 
     const screenshot = await page.screenshot();
 
@@ -151,10 +145,7 @@ app.get("/screenshot", async (req, res) => {
     res.end(finalImage);
   } catch (error) {
     console.error("Error detallado:", error);
-    res.status(500).json({
-      error: error.message,
-      stack: isProd ? undefined : error.stack,
-    });
+    res.status(500).json({ error: error.message });
   } finally {
     if (browser) {
       try {
