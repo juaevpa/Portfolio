@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer-core");
+const puppeteer = require("puppeteer");
 const express = require("express");
 const sharp = require("sharp");
 const path = require("path");
@@ -41,20 +41,9 @@ app.get("/screenshot", async (req, res) => {
   }
 
   try {
-    // Nueva configuración de Puppeteer
     const browser = await puppeteer.launch({
-      product: "chrome",
-      executablePath:
-        process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium",
       headless: true,
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--single-process",
-        "--disable-gpu",
-      ],
-      ignoreHTTPSErrors: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
     const page = await browser.newPage();
@@ -146,11 +135,7 @@ app.get("/screenshot", async (req, res) => {
     res.end(finalImage);
   } catch (error) {
     console.error("Error detallado:", error);
-    res.status(500).json({
-      error:
-        "Error al generar la captura de pantalla. Por favor, inténtalo de nuevo.",
-      details: error.message,
-    });
+    res.status(500).json({ error: error.message });
   }
 });
 

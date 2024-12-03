@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node server.js",
     "build": "echo 'No build step needed'",
-    "postinstall": "npx puppeteer browsers install chrome"
+    "postinstall": "node postinstall.js"
   },
   "dependencies": {
     "express": "^4.21.1",
@@ -14,5 +14,8 @@
   },
   "devDependencies": {
     "gh-pages": "^6.2.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
