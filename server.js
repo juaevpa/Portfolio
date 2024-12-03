@@ -1,11 +1,11 @@
 const express = require("express");
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-core");
 const sharp = require("sharp");
 const path = require("path");
 const fs = require("fs").promises;
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.static("public"));
 
@@ -43,7 +43,7 @@ app.get("/screenshot", async (req, res) => {
   try {
     // Tomar screenshot con Puppeteer
     const browser = await puppeteer.launch({
-      headless: "new",
+      executablePath: "/usr/bin/google-chrome-stable",
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 

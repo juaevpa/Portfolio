@@ -1,26 +1,17 @@
 {
   "name": "portfolio",
   "version": "1.0.0",
-  "main": "script.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d public --maxFileLength 4096",
-    "build": "node scripts/build.js",
-    "build:public": "mkdir -p public && cp -r src/* public/"
+    "build": "echo 'No build step needed'"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "express": "^4.21.1",
     "puppeteer": "^23.8.0",
     "sharp": "^0.33.5"
   },
-  "description": "",
   "devDependencies": {
     "gh-pages": "^6.2.0"
-  },
-  "homepage": "https://juaevpa.github.io/Portfolio"
+  }
 }
