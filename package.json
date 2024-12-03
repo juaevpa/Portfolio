@@ -5,7 +5,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "deploy": "gh-pages -d public"
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d public",
+    "build": "echo 'Add your build command here'"
   },
   "keywords": [],
   "author": "",
@@ -18,5 +20,6 @@
   "description": "",
   "devDependencies": {
     "gh-pages": "^6.2.0"
-  }
+  },
+  "homepage": "https://juaevpa.github.io/Portfolio"
 }
