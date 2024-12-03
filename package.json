@@ -4,8 +4,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "build": "echo 'No build step needed'",
-    "postinstall": "npx puppeteer install"
+    "build": "npm install && node node_modules/puppeteer/install.js"
   },
   "dependencies": {
     "express": "^4.21.1",
