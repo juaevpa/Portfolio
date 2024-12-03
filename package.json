@@ -6,8 +6,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d public",
-    "build": "echo 'Add your build command here'"
+    "deploy": "gh-pages -d public --maxFileLength 4096",
+    "build": "node scripts/build.js",
+    "build:public": "mkdir -p public && cp -r src/* public/"
   },
   "keywords": [],
   "author": "",
